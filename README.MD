@@ -17,3 +17,31 @@ You must pass your credentials via the cli when accessing the service.
 - `USE <DB-NAME>`
    - specifies the database you wish to interact with
 
+## Data
+
+This is a time-series database.  Formatting the data is important for consumption.
+
+Influx data consists of:
+
+- `time`
+    - The timestamp associated with the data point
+- `measurement`
+    - Like an SQL table, where the primary index is always `time`.
+- `tags`
+    - indexed values
+- `fields`
+   - non-indexed values
+
+There can be millions of measurements and no up-front defined schema.
+
+Null values simply aren't stored.
+
+`tags`:
+- `source`
+   - defines the source from which the datapoint was taken
+- `
+
+`fields`:
+- `unit`
+   - defines the unit of measure for associated datapoints
+   
