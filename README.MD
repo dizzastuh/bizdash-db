@@ -1,2 +1,3 @@
 # bizdash-db
-DB for Biz
+
+InfluxDB - BizDash Database
