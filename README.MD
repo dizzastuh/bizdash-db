@@ -5,10 +5,15 @@ InfluxDB - BizDash Database
 
 ## CLI Use
 
+Run the instance with the specific config file.
+
+`influxd -config influxdb.conf`
+
 You must pass your credentials via the cli when accessing the service.
 
-`influx -username superuser -password SuperUltraPass`
+`influx -username <username> -password "<password>"`
 
+^ Note that you need quotes around the password
 
 ## Basic Commands
 
