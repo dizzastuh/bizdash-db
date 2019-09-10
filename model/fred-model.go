@@ -3,65 +3,62 @@ package model
 import (
     "log"
     "fmt"
+    "os"
     "time"
 
-    . "github.com/dizzastuh/bizdash-db/internal"
+    client "github.com/influxdata/influxdb1-client/v2"
+    db "github.com/dizzastuh/bizdash-db/internal"
     . "github.com/nswekosk/fred_go_toolkit"
 )
 
 // time formatting must be done with  Mon Jan 2 15:04:05 MST 2006
 const YYYY_MM_DD = "2006-01-02"
 
-func InsertFredObs(obs Observation, name string) {
+func InsertFredObs(ft *FredType, name string) {
     fmt.Printf("Inserting observations for %s\n", name)
-    client := model.Connect()
-    defer client.Close()
+    con := db.Connect()
 
-    config := Config{
+    config := client.BatchPointsConfig {
         Database: os.Getenv("INFLUX_TABLE"),
     }
 
     bp, _ := client.NewBatchPoints(config)
 
-    for i:= 1; i < len(srs.Observations); i++ {
-        obs := srs.Observations[i]
-
-        // build tags
+    for i:= 1; i < len(ft.Observations); i++ {
+        obs := ft.Observations[i]
         tags := map[string]string{"source": "fred"}
 
-        // build fields
         fields := map[string]interface{}{
             "value":   obs.Value,
         }
 
-        // TODO: parse the end time into a Timestamp
-        timestamp := time.Parse(YYYY_MM_DD, obs.Date)
+        timestamp, err := time.Parse(YYYY_MM_DD, obs.Date)
+        evaluate(err)
 
         point, err := client.NewPoint(
             name,
             tags,
             fields,
-            obs.Date,
+            timestamp,
         )
 
-        if err != nil {
-            log.Fatal(err)
-        }
-
-
+        evaluate(err)
         bp.AddPoint(point)
     }
 
-    err = client.Write(bp)
-    if err != nil {
-        log.Fatal(err)
-    }
+    err := con.Write(bp)
+    con.Close()
 
+    evaluate(err)
     fmt.Println("Done")
 }
 
 func FetchFred() {
-    con := model.Connect()
-
     // TODO: retrieve the data
+}
+
+func evaluate(err error) {
+    if err != nil {
+        log.Fatal(err)
+    }
 }

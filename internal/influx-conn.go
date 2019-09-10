@@ -2,29 +2,23 @@ package internal
 
 import (
     "log"
-    "net/url"
     "os"
 
-    client "github.com/influxdata/influxdb1-client"
+    client "github.com/influxdata/influxdb1-client/v2"
 )
 
-func Connect() *client {
+func Connect() client.Client {
     username := os.Getenv("INFLUX_USERNAME")
     password := os.Getenv("INFLUX_PASSWORD")
-    dbURL    := os.Getenv("DB_HOST")
+    dbhost   := os.Getenv("DB_HOST")
 
-    host, err := url.Parse(dbURL)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    conf := client.Config{
-        URL:      *host,
+    conf := client.HTTPConfig {
+        Addr:     dbhost,
         Username: username,
         Password: password,
     }
 
-    con, err := client.NewHttpClient(conf)
+    con, err := client.NewHTTPClient(conf)
 
     if err != nil {
         log.Fatal(err)
