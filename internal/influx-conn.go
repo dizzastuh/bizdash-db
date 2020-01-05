@@ -3,7 +3,6 @@ package internal
 import (
     "log"
     "os"
-    "fmt"
 
     client "github.com/influxdata/influxdb1-client/v2"
 )
