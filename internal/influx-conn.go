@@ -3,13 +3,14 @@ package internal
 import (
     "log"
     "os"
+    "fmt"
 
     client "github.com/influxdata/influxdb1-client/v2"
 )
 
 func Connect() client.Client {
-    username := os.Getenv("INFLUX_USERNAME")
-    password := os.Getenv("INFLUX_PASSWORD")
+    username := os.Getenv("DB_USER")
+    password := os.Getenv("DB_PW")
     dbhost   := os.Getenv("DB_HOST")
 
     conf := client.HTTPConfig {

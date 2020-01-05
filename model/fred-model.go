@@ -19,14 +19,17 @@ func InsertFredObs(ft *FredType, name string) {
     con := db.Connect()
 
     config := client.BatchPointsConfig {
-        Database: os.Getenv("INFLUX_TABLE"),
+        Database: os.Getenv("DB_NAME"),
     }
 
     bp, _ := client.NewBatchPoints(config)
 
     for i:= 1; i < len(ft.Observations); i++ {
         obs := ft.Observations[i]
-        tags := map[string]string{"source": "fred"}
+        tags := map[string]string{
+            "source": "fred",
+            "name": name,
+        }
 
         fields := map[string]interface{}{
             "value":   obs.Value,
