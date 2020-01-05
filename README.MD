@@ -49,4 +49,3 @@ Null values simply aren't stored.
 `fields`:
 - `unit`
    - defines the unit of measure for associated datapoints
-   
