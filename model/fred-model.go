@@ -14,8 +14,20 @@ import (
 // time formatting must be done with  Mon Jan 2 15:04:05 MST 2006
 const YYYY_MM_DD = "2006-01-02"
 
-func InsertFredObs(ft *FredType, name string) {
-    fmt.Printf("Inserting observations for %s\n", name)
+type FSeriesList struct {
+    List []FSeries `json:"series"`
+}
+
+type FSeries struct {
+    Name                 string   `json:"name"`
+    Description          string   `json:"description"`
+    Frequency            string   `json:"frequency"`
+    Unit                 string   `json:"unit"`
+    SeasonallyAdjusted   bool     `json:"seasonally_adjusted"`
+}
+
+func InsertFredObs(ft *FredType, series *FSeries) {
+    fmt.Printf("Inserting observations for %s\n", series.Name)
     con := db.Connect()
 
     config := client.BatchPointsConfig {
@@ -24,22 +36,25 @@ func InsertFredObs(ft *FredType, name string) {
 
     bp, _ := client.NewBatchPoints(config)
 
-    for i:= 1; i < len(ft.Observations); i++ {
+    for i:= 0; i < 2; i++ { // len(ft.Observations); i++ {
         obs := ft.Observations[i]
         tags := map[string]string{
             "source": "fred",
-            "name": name,
+            "name": series.Name,
+
         }
 
         fields := map[string]interface{}{
-            "value":   obs.Value,
+            "value": obs.Value,
+            "unit": series.Unit,
+            "seasonally_adjusted": series.SeasonallyAdjusted,
         }
 
         timestamp, err := time.Parse(YYYY_MM_DD, obs.Date)
         evaluate(err)
 
         point, err := client.NewPoint(
-            name,
+            "TEMP",
             tags,
             fields,
             timestamp,
