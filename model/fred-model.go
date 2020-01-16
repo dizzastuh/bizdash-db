@@ -20,10 +20,12 @@ type FSeriesList struct {
 
 type FSeries struct {
     Name                 string   `json:"name"`
+    Metric               string   `json:"metric"`
     Description          string   `json:"description"`
     Frequency            string   `json:"frequency"`
     Unit                 string   `json:"unit"`
     SeasonallyAdjusted   bool     `json:"seasonally_adjusted"`
+    Adjustment           uint32   `json:"adjustment"`
 }
 
 func InsertFredObs(ft *FredType, series *FSeries) {
@@ -36,25 +38,25 @@ func InsertFredObs(ft *FredType, series *FSeries) {
 
     bp, _ := client.NewBatchPoints(config)
 
-    for i:= 0; i < 2; i++ { // len(ft.Observations); i++ {
+    for i:= 0; i < len(ft.Observations); i++ {
         obs := ft.Observations[i]
         tags := map[string]string{
             "source": "fred",
-            "name": series.Name,
-
+            "series": series.Name,
         }
 
         fields := map[string]interface{}{
             "value": obs.Value,
             "unit": series.Unit,
             "seasonally_adjusted": series.SeasonallyAdjusted,
+            "adjustment": series.Adjustment,
         }
 
         timestamp, err := time.Parse(YYYY_MM_DD, obs.Date)
         evaluate(err)
 
         point, err := client.NewPoint(
-            "TEMP",
+            series.Metric,
             tags,
             fields,
             timestamp,
