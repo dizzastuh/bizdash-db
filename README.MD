@@ -44,7 +44,6 @@ Null values simply aren't stored.
 `tags`:
 - `source`
    - defines the source from which the datapoint was taken
-- `
 
 `fields`:
 - `unit`
